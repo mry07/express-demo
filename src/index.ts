@@ -1,18 +1,21 @@
 import "dotenv/config";
 import cors from "cors";
-import Express from "express";
+import express from "express";
 import * as Path from "path";
 import * as Exception from "./exception";
+import { createRoutes } from "./routes";
 
-const app = Express();
+const app = express();
 
 export const main = async () => {
   // middleware
-  app.use(Express.json());
+  app.use(express.json());
   app.use(cors());
 
   // route
-  app.use("/public", Express.static(Path.join(process.cwd(), "public")));
+  const routes = await createRoutes();
+  app.use("/api", routes);
+  app.use("/public", express.static(Path.join(process.cwd(), "public")));
 
   // error handler
   app.use(Exception.errorHandler);

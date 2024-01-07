@@ -1,4 +1,5 @@
 import ClientError from "./client-error";
+import ValidationError from "./validation-error";
 import { ErrorHandler, ErrorHttpHandler, HttpStatus } from "../../types";
 
 export const errorHandler: ErrorHandler = (err, req, res, next) => {
@@ -6,6 +7,14 @@ export const errorHandler: ErrorHandler = (err, req, res, next) => {
     res.status(err.status).json({
       error: "client",
       message: err.message,
+    });
+    return;
+  }
+
+  if (err instanceof ValidationError) {
+    res.status(HttpStatus.UNPROCESSABLE_CONTENT).json({
+      error: "validation",
+      details: err.details,
     });
     return;
   }
